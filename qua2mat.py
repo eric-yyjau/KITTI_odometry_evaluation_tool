@@ -1,3 +1,7 @@
+## euler angle to 3x4 matrix
+## or quaternion to 3x4 matrix
+## preprocess before kitti evaluation.
+
 from tools.pose_evaluation_utils import quat_pose_to_mat
 import argparse
 import numpy as np
@@ -31,15 +35,20 @@ if __name__ == '__main__':
     parser.add_argument('traj_file',     type=str,  help='the trajectory file')
     parser.add_argument('out_file',     type=str,  help='the output file name')
     # parser.add_argument('--result_dir', type=str, default='./data/',              help='Directory path of storing the odometry results')
-    # parser.add_argument('--eva_seqs',   type=str, default='09_pred,10_pred,11_pred',      help='The sequences to be evaluated') 
+    parser.add_argument('--action',  type=str, default=None, help='[ euler2mat | ]') 
     # parser.add_argument('--toCameraCoord',   type=lambda x: (str(x).lower() == 'true'), default=False, help='Whether to convert the pose to camera coordinate')
+    parser.add_argument('--removeTime', type=bool, action="store_true", help='remove first column')
 
     args = parser.parse_args()
     poses_quat = np.genfromtxt(args.traj_file, delimiter=",")
     # poses_mat = [quat_pose_to_mat(v)[:3,:] for v in poses_quat] 
-    poses_mat = [euler2mat(v)[:3,:] for v in poses_quat] 
-    poses_mat = np.array(poses_mat)
-    poses_mat = poses_mat.reshape(-1, 12)
+    if args.removeTime:
+        poses_quat = poses_quat[1:, :]
+
+    if args.action == 'euler2mat':
+        poses_mat = [euler2mat(v)[:3,:] for v in poses_quat] 
+        poses_mat = np.array(poses_mat)
+        poses_mat = poses_mat.reshape(-1, 12)
     np.savetxt(args.out_file, poses_mat)
 
     # pose_eval = kittiOdomEval(args)
