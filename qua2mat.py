@@ -37,7 +37,7 @@ if __name__ == '__main__':
     # parser.add_argument('--result_dir', type=str, default='./data/',              help='Directory path of storing the odometry results')
     parser.add_argument('--action',  type=str, default=None, help='[ euler2mat | ]') 
     # parser.add_argument('--toCameraCoord',   type=lambda x: (str(x).lower() == 'true'), default=False, help='Whether to convert the pose to camera coordinate')
-    parser.add_argument('--removeTime', type=bool, action="store_true", help='remove first column')
+    parser.add_argument('--removeTime', action="store_true", help='remove first column')
 
     args = parser.parse_args()
     poses_quat = np.genfromtxt(args.traj_file, delimiter=",")
